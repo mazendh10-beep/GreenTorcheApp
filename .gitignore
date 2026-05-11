@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+.expo-shared/
+dist/
+dist-expo-check/
+web-build/
+
+# Native build output
+android/.gradle/
+android/app/build/
+android/build/
+ios/build/
+*.apk
+*.aab
+*.ipa
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+expo-cli-start-*.log
+
+# OS and editors
+.DS_Store
+Thumbs.db
