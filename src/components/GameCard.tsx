@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import type { Game } from "../types";
 import { colors, radius, spacing, typography } from "../theme";
 import RatingStars from "./RatingStars";
@@ -17,13 +17,14 @@ const toMoney = (value: number) =>
 
 const GameCard = ({ game, onPress }: GameCardProps) => {
   const scale = useRef(new Animated.Value(1)).current;
+  const useNativeDriver = Platform.OS !== "web";
 
   const animateScale = (toValue: number) => {
     Animated.spring(scale, {
       toValue,
       speed: 22,
       bounciness: 4,
-      useNativeDriver: true
+      useNativeDriver
     }).start();
   };
 

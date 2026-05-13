@@ -5,6 +5,7 @@ node_modules/
 .expo/
 .expo-shared/
 dist/
+dist-web/
 dist-expo-check/
 web-build/
 
@@ -28,6 +29,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 expo-cli-start-*.log
+serve-dist-web-*.log
 
 # OS and editors
 .DS_Store

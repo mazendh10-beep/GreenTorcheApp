@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Animated, Easing } from "react-native";
+import { Animated, Easing, Platform } from "react-native";
 import type { PropsWithChildren } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 
@@ -17,6 +17,7 @@ const AnimatedEntrance = ({
 }: AnimatedEntranceProps) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(distance)).current;
+  const useNativeDriver = Platform.OS !== "web";
 
   useEffect(() => {
     Animated.parallel([
@@ -25,17 +26,17 @@ const AnimatedEntrance = ({
         duration: 420,
         delay,
         easing: Easing.out(Easing.cubic),
-        useNativeDriver: true
+        useNativeDriver
       }),
       Animated.timing(translateY, {
         toValue: 0,
         duration: 420,
         delay,
         easing: Easing.out(Easing.cubic),
-        useNativeDriver: true
+        useNativeDriver
       })
     ]).start();
-  }, [delay, opacity, translateY]);
+  }, [delay, opacity, translateY, useNativeDriver]);
 
   return (
     <Animated.View
