@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../config";
+import { demoGames, getDemoGameById, getDemoGames, getDemoReviews } from "./demoData";
 import type {
   AnalyticsOverview,
   DeveloperAnalytics,
@@ -12,7 +13,7 @@ import type {
   UserReview
 } from "../types";
 
-const API_BASE_URL = API_URL.trim() || "http://localhost:5000/api";
+const API_BASE_URL = API_URL.trim();
 const TOKEN_KEY = "greentorch_token";
 const REQUEST_TIMEOUT_MS = 10000;
 const getCache = new Map<string, { expiresAt: number; data: unknown }>();
@@ -54,6 +55,51 @@ const parseResponsePayload = async (response: Response) => {
 const clearGetCache = () => {
   getCache.clear();
 };
+
+const createApiUnavailableError = () => {
+  const err = new Error(
+    "API server is not configured. Set EXPO_PUBLIC_API_URL to enable login and saved changes."
+  ) as ApiError;
+  err.status = 0;
+  return err;
+};
+
+const getDemoResponse = (
+  path: string,
+  method: HttpMethod,
+  requiresAuth: boolean
+): { handled: true; data: unknown } | { handled: false } => {
+  if (method === "GET" && !requiresAuth) {
+    if (path === "/games/popular") {
+      return { handled: true, data: demoGames.slice(0, 3) };
+    }
+
+    if (path.startsWith("/games?") || path === "/games") {
+      const query = path.includes("?") ? path.slice(path.indexOf("?") + 1) : "";
+      return { handled: true, data: getDemoGames(Object.fromEntries(new URLSearchParams(query))) };
+    }
+
+    const gameMatch = path.match(/^\/games\/([^/]+)$/);
+    if (gameMatch) {
+      const game = getDemoGameById(gameMatch[1]);
+      if (game) return { handled: true, data: game };
+    }
+
+    const reviewMatch = path.match(/^\/reviews\/game\/([^/]+)$/);
+    if (reviewMatch) {
+      return { handled: true, data: getDemoReviews(reviewMatch[1]) };
+    }
+  }
+
+  if (method === "POST" && !requiresAuth && path.match(/^\/analytics\/views\/[^/]+$/)) {
+    return { handled: true, data: {} };
+  }
+
+  return { handled: false };
+};
+
+const isNetworkFailure = (error: unknown) =>
+  error instanceof TypeError || (error instanceof Error && error.message === "Network request failed");
 
 const getRequestCacheTtl = (path: string) => {
   if (path.includes("/games/popular")) return 60_000;
@@ -107,6 +153,22 @@ const request = async <T>(
   const token = requiresAuth ? await getToken() : null;
 
   const execute = async () => {
+    if (!API_BASE_URL) {
+      const demoResponse = getDemoResponse(path, method, requiresAuth);
+      if (demoResponse.handled) {
+        if (ttlMs > 0) {
+          getCache.set(cacheKey, {
+            expiresAt: Date.now() + ttlMs,
+            data: demoResponse.data
+          });
+        }
+
+        return demoResponse.data as T;
+      }
+
+      throw createApiUnavailableError();
+    }
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -155,6 +217,20 @@ const request = async <T>(
         const timeoutError = new Error("Request timed out. Please try again.") as ApiError;
         timeoutError.status = 408;
         throw timeoutError;
+      }
+
+      if (!requiresAuth && isNetworkFailure(error)) {
+        const demoResponse = getDemoResponse(path, method, requiresAuth);
+        if (demoResponse.handled) {
+          if (ttlMs > 0) {
+            getCache.set(cacheKey, {
+              expiresAt: Date.now() + ttlMs,
+              data: demoResponse.data
+            });
+          }
+
+          return demoResponse.data as T;
+        }
       }
 
       if (error instanceof Error) {

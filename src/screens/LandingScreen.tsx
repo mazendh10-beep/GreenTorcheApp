@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import AnimatedEntrance from "../components/AnimatedEntrance";
@@ -29,7 +29,10 @@ const LandingScreen = () => {
   return (
     <ScrollView style={sharedStyles.screen} contentContainerStyle={sharedStyles.content}>
       <AnimatedEntrance style={styles.heroWrap}>
-        <View style={sharedStyles.backgroundOrbs} pointerEvents="none">
+        <View
+          pointerEvents={Platform.OS === "web" ? undefined : "none"}
+          style={[sharedStyles.backgroundOrbs, styles.decorLayer]}
+        >
           <View style={sharedStyles.orbTop} />
           <View style={sharedStyles.orbBottom} />
         </View>
@@ -117,6 +120,9 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: spacing.md
+  },
+  decorLayer: {
+    pointerEvents: "none"
   }
 });
 

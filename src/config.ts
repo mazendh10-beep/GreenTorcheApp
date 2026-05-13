@@ -1,8 +1,11 @@
 import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 const expoApiUrl = Constants.expoConfig?.extra?.apiUrl;
 
 const resolveExpoHostApiUrl = () => {
+  if (Platform.OS === "web") return null;
+
   const hostUri = Constants.expoConfig?.hostUri ?? null;
   if (!hostUri) return null;
 
@@ -15,4 +18,4 @@ const resolveExpoHostApiUrl = () => {
 export const API_URL =
   (typeof expoApiUrl === "string" ? expoApiUrl.trim() : "") ||
   resolveExpoHostApiUrl() ||
-  "http://localhost:5000/api";
+  "";

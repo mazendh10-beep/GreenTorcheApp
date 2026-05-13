@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const colors = {
   background: "#0f1115",
@@ -30,6 +30,20 @@ export const radius = {
   md: 12,
   lg: 16
 } as const;
+
+const webShadow = (y: number, blur: number, color: string) =>
+  Platform.OS === "web" ? ({ boxShadow: `0 ${y}px ${blur}px ${color}` } as object) : null;
+
+const nativeShadow = (color: string, y: number, opacity: number, radiusValue: number, elevation: number) =>
+  Platform.OS === "web"
+    ? null
+    : {
+        shadowColor: color,
+        shadowOffset: { width: 0, height: y },
+        shadowOpacity: opacity,
+        shadowRadius: radiusValue,
+        elevation
+      };
 
 export const typography = StyleSheet.create({
   heroTitle: {
@@ -104,11 +118,8 @@ export const sharedStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: radius.lg,
     padding: spacing.lg,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    elevation: 4
+    ...webShadow(10, 24, colors.shadow),
+    ...nativeShadow(colors.shadow, 10, 0.2, 24, 4)
   },
   softCard: {
     backgroundColor: colors.surfaceSoft,
@@ -124,11 +135,8 @@ export const sharedStyles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 18,
-    elevation: 4
+    ...webShadow(8, 18, "rgba(24,165,88,0.25)"),
+    ...nativeShadow(colors.primary, 8, 0.25, 18, 4)
   },
   buttonSecondary: {
     backgroundColor: colors.surfaceSoft,

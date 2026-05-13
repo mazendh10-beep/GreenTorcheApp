@@ -56,14 +56,15 @@ const StoreScreen = () => {
               selectedValue={category}
               onValueChange={(value) => setCategory(String(value))}
               dropdownIconColor={colors.text}
+              itemStyle={styles.pickerItem}
               style={styles.picker}
             >
-              <Picker.Item label="All categories" value="" />
-              <Picker.Item label="Adventure" value="Adventure" />
-              <Picker.Item label="Action" value="Action" />
-              <Picker.Item label="Puzzle" value="Puzzle" />
-              <Picker.Item label="Strategy" value="Strategy" />
-              <Picker.Item label="RPG" value="RPG" />
+              <Picker.Item color={colors.text} label="All categories" style={styles.pickerItem} value="" />
+              <Picker.Item color={colors.text} label="Adventure" style={styles.pickerItem} value="Adventure" />
+              <Picker.Item color={colors.text} label="Action" style={styles.pickerItem} value="Action" />
+              <Picker.Item color={colors.text} label="Puzzle" style={styles.pickerItem} value="Puzzle" />
+              <Picker.Item color={colors.text} label="Strategy" style={styles.pickerItem} value="Strategy" />
+              <Picker.Item color={colors.text} label="RPG" style={styles.pickerItem} value="RPG" />
             </Picker>
           </View>
           <View style={styles.summaryRow}>
@@ -156,6 +157,11 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   picker: {
+    backgroundColor: colors.surfaceSoft,
+    color: colors.text
+  },
+  pickerItem: {
+    backgroundColor: colors.surfaceSoft,
     color: colors.text
   },
   summaryRow: {

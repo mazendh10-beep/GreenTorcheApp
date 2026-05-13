@@ -15,6 +15,17 @@ const toMoney = (value: number) =>
     currency: "TND"
   }).format(value);
 
+const cardShadow =
+  Platform.OS === "web"
+    ? ({ boxShadow: `0 10px 20px ${colors.shadow}` } as object)
+    : {
+        shadowColor: colors.shadow,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.18,
+        shadowRadius: 20,
+        elevation: 5
+      };
+
 const GameCard = ({ game, onPress }: GameCardProps) => {
   const scale = useRef(new Animated.Value(1)).current;
   const useNativeDriver = Platform.OS !== "web";
@@ -94,11 +105,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: radius.lg,
     overflow: "hidden",
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.18,
-    shadowRadius: 20,
-    elevation: 5
+    ...cardShadow
   },
   image: {
     width: "100%",

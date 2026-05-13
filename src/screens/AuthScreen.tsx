@@ -112,10 +112,11 @@ const AuthScreen = ({ navigation }: AppScreenProps<"Auth">) => {
               selectedValue={role}
               onValueChange={(value) => setRole(value as "player" | "developer")}
               dropdownIconColor={colors.text}
+              itemStyle={styles.pickerItem}
               style={styles.picker}
             >
-              <Picker.Item label="Player" value="player" />
-              <Picker.Item label="Developer" value="developer" />
+              <Picker.Item color={colors.text} label="Player" style={styles.pickerItem} value="player" />
+              <Picker.Item color={colors.text} label="Developer" style={styles.pickerItem} value="developer" />
             </Picker>
           </View>
         ) : null}
@@ -168,6 +169,11 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   picker: {
+    backgroundColor: colors.surfaceSoft,
+    color: colors.text
+  },
+  pickerItem: {
+    backgroundColor: colors.surfaceSoft,
     color: colors.text
   }
 });
